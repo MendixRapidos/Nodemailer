@@ -61,28 +61,36 @@ async function send(email, subject) {
         subject: subject,
         html:
             `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Document</title>
-        </head>
-        <body onload="load()">
-            <div><h3>Hello!!</h3><p>This is test to track Email</p>
-            <script>
-                function load(){
-                    fetch("https://node-mailer-zq2s.onrender.com/pixel",{
-                        method: "POST",
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({subject:'${subject}'})
-                    })
-                }
-            </script></div>
-            <a href="https://node-mailer-zq2s.onrender.com/read" target="_blank" >Track</a>
+            <!DOCTYPE html>
+            <html lang="en">
             
-        </body>
-        </html>
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Document</title>
+            </head>
+            
+            <body onload="load()">
+                <div>
+                    <h3>Hello!!</h3>
+                    <p>This is test to track Email</p>
+                    <script>
+                        function load() {
+                            let params = { subject: '${subject}' };
+                            let baseurl = "https://node-mailer-zq2s.onrender.com/pixel";
+                            let newUrl = new URL(baseurl);
+                            newUrl.search = new URLSearchParams(params).toString();
+                            fetch(url)
+                                .then(response => response.json())
+                                .then(data => console.log(data))
+                        }
+                    </script>
+                </div>
+                <a href="https://node-mailer-zq2s.onrender.com/read" target="_blank">Track</a>
+            
+            </body>
+            
+            </html>
         `
     }
 
@@ -111,12 +119,12 @@ app.get("/read", (req, res) => {
     res.send({ read: "success", count: count });
 })
 
-app.post("/pixel", (req, res) => {
-    // console.log(req.params['recipient']);
-    // console.log(req.query);
-    console.log(req.body);
+app.get("/pixel", (req, res) => {
+    console.log(req.params);
+    console.log(req.query);
+    // console.log(req.body);
     count++;
-    console.log("Subject: " + req.body.subject);
+    // console.log("Subject: " + req.body.subject);
     console.log("After read Count: " + count);
     
     res.send({ read: "success", count: count });
