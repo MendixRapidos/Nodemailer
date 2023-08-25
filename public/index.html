@@ -7,6 +7,11 @@
 </head>
 <body>
     <h3>Admin View</h3>
+    
+    <input type="email" id="email" width="200px"/>
+    <button onclick="sendMail()">Send</button>
+    <p id="status"></p>
+    <br>
 
     <button onclick="getCount()">Fetch</button>
     <br>
@@ -18,6 +23,20 @@
         let response = await fetch("https://node-mailer-zq2s.onrender.com/count")
         let data = await response.json();
         document.getElementById("count").innerHTML = data.count
+    }
+
+    async function sendMail(){
+       let email =  document.getElementById("email").value;
+       let response = await fetch("https://node-mailer-zq2s.onrender.com/email", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({email: email})
+       })
+       let status = await response.json();
+
+       document.getElementById("status").innerHTML = status.status;
+
+
     }
     
 </script>    

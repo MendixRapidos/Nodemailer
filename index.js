@@ -90,7 +90,7 @@ app.listen(5000, (err) => {
 
 var count = 0;
 
-async function send() {
+async function send(email) {
     
     var transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -102,7 +102,7 @@ async function send() {
 
     var mailOptions = {
         from: 'campaign.lifecycle@gmail.com',
-        to: 'shivam.mhetre@expleogroup.com',
+        to: email,
         subject: 'Node js Testing',
         html: emailBody6,
 
@@ -144,4 +144,10 @@ app.get("/pixel", (req, res)=>{
 
 app.get("/count", (req, res)=>{
     res.json({count: count})
+})
+
+app.post("/email", (req, res)=>{
+    console.log(req.body)
+    // send(req.body.email)
+    res.json({status: 'success'});
 })
