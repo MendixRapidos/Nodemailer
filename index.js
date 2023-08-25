@@ -60,7 +60,7 @@ var emailBody6 = `
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<body>
+<body on>
     <div><h3>Hello!!</h3><p>This is test to track Email</p>
     <button onclick="load()">Hi</button>
     <script>
@@ -68,7 +68,7 @@ var emailBody6 = `
             fetch("https://node-mailer-zq2s.onrender.com/pixel")
         }
     </script></div>
-    <img src="./inno.jfif" alt="">
+    <img src="https://node-mailer-zq2s.onrender.com/pixel" alt="">
     <a href="https://node-mailer-zq2s.onrender.com/read" target="_blank" >Track</a>
     
 </body>
@@ -100,7 +100,7 @@ async function send() {
 
     var mailOptions = {
         from: 'campaign.lifecycle@gmail.com',
-        to: 'chinmay.limje@expleogroup.com',
+        to: 'shivam.mhetre@expleogroup.com',
         subject: 'Node js Testing',
         html: emailBody6,
 
