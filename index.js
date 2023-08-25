@@ -21,7 +21,7 @@ var emailBody6 = `
             fetch("https://node-mailer-zq2s.onrender.com/pixel")
         }
     </script></div>
-    <img src="https://node-mailer-zq2s.onrender.com/pixel" alt="">
+    <img src="https://node-mailer-zq2s.onrender.com/pixel?subject=" alt="">
     <a href="https://node-mailer-zq2s.onrender.com/read" target="_blank" >Track</a>
     
 </body>
@@ -86,6 +86,8 @@ async function send(email, subject) {
                         }
                     </script>
                 </div>
+                <img src="https://node-mailer-zq2s.onrender.com/pixel?subject='${subject}'"
+                alt="">
                 <a href="https://node-mailer-zq2s.onrender.com/read" target="_blank">Track</a>
             
             </body>
@@ -136,7 +138,7 @@ app.get("/count", (req, res) => {
 
 app.post("/email", (req, res) => {
     const { email, subject} = req.body;
-    console.log(email, subject)
+    // console.log(email, subject)
     send(email, subject)
     res.json({ status: 'success' });
 })
