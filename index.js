@@ -34,8 +34,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors({ origin: '*' }));
 
-// app.use(express.static('public'));
-app.use(express.static('private'));
+app.use(express.static('public'));
+// app.use(express.static('private'));
 
 app.listen(5000, (err) => {
     if (err) throw err;
