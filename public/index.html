@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h3>Admin View</h3>
+
+    <button onclick="getCount()">Fetch</button>
+    <br>
+    <h5>View Count: </h5>
+    <p id="count">NULL</p>
+
+<script>
+    async function getCount(){
+        let response = await fetch("https://node-mailer-zq2s.onrender.com/count")
+        let data = await response.json();
+        document.getElementById("count").innerHTML = data.count
+    }
+    
+</script>    
+    
+</body>
+</html>

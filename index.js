@@ -81,6 +81,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors({ origin: '*' }));
 
+app.use(express.static('public'));
+
 app.listen(5000, (err) => {
     if (err) throw err;
     else console.log('Listening on 5000');
@@ -139,3 +141,7 @@ app.get("/pixel", (req, res)=>{
     console.log("After read Count: "+count);
     res.send({ read: "success", count: count });
 })  
+
+app.get("/count", (req, res)=>{
+    res.json({count: count})
+})
