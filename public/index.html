@@ -20,6 +20,8 @@
     <br>
     <h5>View Count: </h5>
     <p id="count">NULL</p>
+    <br>
+    <button onclick="reset()">Reset</button>
 
     <script>
         async function getCount() {
@@ -31,11 +33,10 @@
         async function sendMail() {
             let email = document.getElementById("email").value;
             let subject = document.getElementById("subject").value;
-            let body = document.getElementById("body").value;
             let response = await fetch("https://node-mailer-zq2s.onrender.com", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email, subject: subject, body: body})
+                body: JSON.stringify({ email: email, subject: subject})
             })
             let status = await response.json();
 
