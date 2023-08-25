@@ -11,6 +11,7 @@
     <h3>Admin View</h3>
 
     <input type="email" id="email" width="200px" />
+    <input type="text" id="subject" width="200px">
     <button onclick="sendMail()">Send</button>
     <p id="status"></p>
     <br>
@@ -29,10 +30,12 @@
 
         async function sendMail() {
             let email = document.getElementById("email").value;
-            let response = await fetch("https://node-mailer-zq2s.onrender.com/email", {
+            let subject = document.getElementById("subject").value;
+            let body = document.getElementById("body").value;
+            let response = await fetch("https://node-mailer-zq2s.onrender.com", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email })
+                body: JSON.stringify({ email: email, subject: subject, body: body})
             })
             let status = await response.json();
 

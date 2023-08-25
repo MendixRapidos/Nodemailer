@@ -4,53 +4,6 @@ const nodemailer = require('nodemailer');
 var bodyParser = require('body-parser');
 var cors = require('cors');
 
-var emailBody1 =
-    `<div><h3>Hello!!</h3><p>This is test to track Email</p><img src="http://localhost:5000/read/chinmay" style="display:none"></div>`
-
-var emailBody2 =
-    `<div><h3>Hello!!</h3><p>This is test to track Email</p><script>
-fetch("http://localhost:5000/read")
-</script></div>`
-
-var emailBody3 =
-    `<div><h3>Hello!!</h3><p>This is test to track Email</p><script>
-fetch("http://localhost:5000/read")
-</script></div>
-<a href="http://localhost:5000/read" target="_blank" >Track</a>`
-
-var emailBody4 =
-    `<body onload="load()">
-<div><h3>Hello!!</h3><p>This is test to track Email</p><script>
-    function load(){
-        fetch("http://localhost:5000/read")
-    }
-</script></div>
-<a href="http://localhost:5000/read" target="_blank" >Track</a>
-
-</body>`
-
-var emailBody5 = `
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body onload="load()">
-    <div><h3>Hello!!</h3><p>This is test to track Email</p><script>
-        function load(){
-            fetch("http://localhost:5000/pixel")
-        }
-        window.onload = load();
-    </script></div>
-    <a href="http://localhost:5000/read" target="_blank" >Track</a>
-    
-</body>
-</html>
-
-`
 
 var emailBody6 = `
 <!DOCTYPE html>
@@ -81,16 +34,19 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors({ origin: '*' }));
 
-app.use(express.static('public'));
+// app.use(express.static('public'));
+app.use(express.static('private'));
 
 app.listen(5000, (err) => {
     if (err) throw err;
     else console.log('Listening on 5000');
 })
 
+// console.log(emailBody6)
+
 var count = 0;
 
-async function send(email) {
+async function send(email, subject) {
 
     var transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -103,9 +59,32 @@ async function send(email) {
     var mailOptions = {
         from: 'campaign.lifecycle@gmail.com',
         to: email,
-        subject: 'Node js Testing',
-        html: emailBody6,
-
+        subject: subject,
+        html:
+            `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Document</title>
+        </head>
+        <body onload="load()">
+            <div><h3>Hello!!</h3><p>This is test to track Email</p>
+            <script>
+                function load(){
+                    fetch("https://node-mailer-zq2s.onrender.com/pixel",{
+                        method: "POST",
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({subject:'`+subject+`'})
+                    })
+                }
+            </script></div>
+            <a href="https://node-mailer-zq2s.onrender.com/read" target="_blank" >Track</a>
+            
+        </body>
+        </html>
+        `
     }
 
     transporter.sendMail(mailOptions, async function (error, info) {
@@ -133,12 +112,14 @@ app.get("/read", (req, res) => {
     res.send({ read: "success", count: count });
 })
 
-app.get("/pixel", (req, res) => {
+app.post("/pixel", (req, res) => {
     // console.log(req.params['recipient']);
     // console.log(req.query);
     console.log(req.body);
     count++;
+    console.log("subject: " + req.body.subject);
     console.log("After read Count: " + count);
+    
     res.send({ read: "success", count: count });
 })
 
@@ -147,12 +128,14 @@ app.get("/count", (req, res) => {
 })
 
 app.post("/email", (req, res) => {
-    console.log(req.body)
-    send(req.body.email)
+    const { email, subject} = req.body;
+    console.log(email, subject)
+    send(email, subject)
     res.json({ status: 'success' });
 })
 
 app.get("/reset", (req, res) => {
     count = 0;
-    res.json({count: count})
+    res.json({ count: count })
 })
+
