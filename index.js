@@ -116,7 +116,7 @@ app.post("/pixel", (req, res) => {
     // console.log(req.query);
     console.log(req.body);
     count++;
-    console.log("subject: " + req.body.subject);
+    console.log("Subject: " + req.body.subject);
     console.log("After read Count: " + count);
     
     res.send({ read: "success", count: count });
