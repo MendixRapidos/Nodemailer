@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
     <h3>Admin View</h3>
-    
-    <input type="email" id="email" width="200px"/>
+
+    <input type="email" id="email" width="200px" />
     <button onclick="sendMail()">Send</button>
     <p id="status"></p>
     <br>
@@ -18,28 +20,38 @@
     <h5>View Count: </h5>
     <p id="count">NULL</p>
 
-<script>
-    async function getCount(){
-        let response = await fetch("https://node-mailer-zq2s.onrender.com/count")
-        let data = await response.json();
-        document.getElementById("count").innerHTML = data.count
-    }
+    <script>
+        async function getCount() {
+            let response = await fetch("https://node-mailer-zq2s.onrender.com/count")
+            let data = await response.json();
+            document.getElementById("count").innerHTML = data.count
+        }
 
-    async function sendMail(){
-       let email =  document.getElementById("email").value;
-       let response = await fetch("https://node-mailer-zq2s.onrender.com/email", {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({email: email})
-       })
-       let status = await response.json();
+        async function sendMail() {
+            let email = document.getElementById("email").value;
+            let response = await fetch("https://node-mailer-zq2s.onrender.com/email", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            })
+            let status = await response.json();
 
-       document.getElementById("status").innerHTML = status.status;
+            document.getElementById("status").innerHTML = status.status;
+        }
 
+        async function reset(){
+            let response = await fetch("https://node-mailer-zq2s.onrender.com/reset", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            })
+            let count = await response.json();
 
-    }
-    
-</script>    
-    
+            document.getElementById("count").innerHTML = count.count
+        }
+
+    </script>
+
 </body>
+
 </html>

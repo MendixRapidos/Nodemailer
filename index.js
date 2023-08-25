@@ -4,22 +4,22 @@ const nodemailer = require('nodemailer');
 var bodyParser = require('body-parser');
 var cors = require('cors');
 
-var emailBody1 = 
-`<div><h3>Hello!!</h3><p>This is test to track Email</p><img src="http://localhost:5000/read/chinmay" style="display:none"></div>`
+var emailBody1 =
+    `<div><h3>Hello!!</h3><p>This is test to track Email</p><img src="http://localhost:5000/read/chinmay" style="display:none"></div>`
 
-var emailBody2 = 
-`<div><h3>Hello!!</h3><p>This is test to track Email</p><script>
+var emailBody2 =
+    `<div><h3>Hello!!</h3><p>This is test to track Email</p><script>
 fetch("http://localhost:5000/read")
 </script></div>`
 
-var emailBody3 = 
-`<div><h3>Hello!!</h3><p>This is test to track Email</p><script>
+var emailBody3 =
+    `<div><h3>Hello!!</h3><p>This is test to track Email</p><script>
 fetch("http://localhost:5000/read")
 </script></div>
 <a href="http://localhost:5000/read" target="_blank" >Track</a>`
 
-var emailBody4 = 
-`<body onload="load()">
+var emailBody4 =
+    `<body onload="load()">
 <div><h3>Hello!!</h3><p>This is test to track Email</p><script>
     function load(){
         fetch("http://localhost:5000/read")
@@ -91,7 +91,7 @@ app.listen(5000, (err) => {
 var count = 0;
 
 async function send(email) {
-    
+
     var transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -120,34 +120,39 @@ async function send(email) {
 
 // send();
 
-app.get("/send", async(req, res)=>{
+app.get("/send", async (req, res) => {
     await send();
-    console.log("Original Count: "+count)
+    console.log("Original Count: " + count)
     res.send("Sent success")
 })
 
-app.get("/read", (req, res)=>{
+app.get("/read", (req, res) => {
     console.log(req.body)
     count++;
-    console.log("After read Count: "+count);
+    console.log("After read Count: " + count);
     res.send({ read: "success", count: count });
 })
 
-app.get("/pixel", (req, res)=>{
+app.get("/pixel", (req, res) => {
     // console.log(req.params['recipient']);
     // console.log(req.query);
     console.log(req.body);
     count++;
-    console.log("After read Count: "+count);
+    console.log("After read Count: " + count);
     res.send({ read: "success", count: count });
-})  
-
-app.get("/count", (req, res)=>{
-    res.json({count: count})
 })
 
-app.post("/email", (req, res)=>{
+app.get("/count", (req, res) => {
+    res.json({ count: count })
+})
+
+app.post("/email", (req, res) => {
     console.log(req.body)
-    // send(req.body.email)
-    res.json({status: 'success'});
+    send(req.body.email)
+    res.json({ status: 'success' });
+})
+
+app.get("/reset", (req, res) => {
+    count = 0;
+    res.json({count: count})
 })
