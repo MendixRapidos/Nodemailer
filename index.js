@@ -138,4 +138,4 @@ app.get("/pixel", (req, res)=>{
     count++;
     console.log("After read Count: "+count);
     res.send({ read: "success", count: count });
-})
+})  
