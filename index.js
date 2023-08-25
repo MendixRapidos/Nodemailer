@@ -65,11 +65,11 @@ var emailBody6 = `
     <button onclick="load()">Hi</button>
     <script>
         function load(){
-            fetch("http://localhost:5000/pixel")
+            fetch("https://node-mailer-zq2s.onrender.com/pixel")
         }
     </script></div>
     <img src="./inno.jfif" alt="">
-    <a href="http://localhost:5000/read" target="_blank" >Track</a>
+    <a href="https://node-mailer-zq2s.onrender.com/read" target="_blank" >Track</a>
     
 </body>
 </html>
