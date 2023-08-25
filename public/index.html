@@ -10,8 +10,8 @@
 <body>
     <h3>Admin View</h3>
 
-    <input type="email" id="email" width="200px" />
-    <input type="text" id="subject" width="200px">
+    <input type="email" id="email" width="200px" required />
+    <input type="text" id="subject" width="200px" required/>
     <button onclick="sendMail()">Send</button>
     <p id="status"></p>
     <br>
@@ -33,7 +33,7 @@
         async function sendMail() {
             let email = document.getElementById("email").value;
             let subject = document.getElementById("subject").value;
-            let response = await fetch("https://node-mailer-zq2s.onrender.com", {
+            let response = await fetch("https://node-mailer-zq2s.onrender.com/email", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: email, subject: subject})
@@ -44,13 +44,8 @@
         }
 
         async function reset(){
-            let response = await fetch("https://node-mailer-zq2s.onrender.com/reset", {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email })
-            })
+            let response = await fetch("http://localhost:5000/reset")
             let count = await response.json();
-
             document.getElementById("count").innerHTML = count.count
         }
 

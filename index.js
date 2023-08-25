@@ -29,7 +29,6 @@ var emailBody6 = `
 `
 
 
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors({ origin: '*' }));
@@ -76,7 +75,7 @@ async function send(email, subject) {
                     fetch("https://node-mailer-zq2s.onrender.com/pixel",{
                         method: "POST",
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({subject:'`+subject+`'})
+                        body: JSON.stringify({subject:'${subject}'})
                     })
                 }
             </script></div>
