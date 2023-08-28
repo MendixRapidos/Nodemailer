@@ -4,31 +4,6 @@ const nodemailer = require('nodemailer');
 var bodyParser = require('body-parser');
 var cors = require('cors');
 
-
-var emailBody6 = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body on>
-    <div><h3>Hello!!</h3><p>This is test to track Email</p>
-    <button onclick="load()">Hi</button>
-    <script>
-        function load(){
-            fetch("https://node-mailer-zq2s.onrender.com/pixel")
-        }
-    </script></div>
-    <img src="https://node-mailer-zq2s.onrender.com/pixel?subject=" alt="">
-    <a href="https://node-mailer-zq2s.onrender.com/read" target="_blank" >Track</a>
-    
-</body>
-</html>
-`
-
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors({ origin: '*' }));
@@ -55,7 +30,37 @@ async function send(email, subject) {
         }
     });
 
-    var mailOptions = {
+    var mailOptionsPublic = {
+        from: 'campaign.lifecycle@gmail.com',
+        to: email,
+        subject: subject,
+        html:
+            `
+            <!DOCTYPE html>
+            <html lang="en">
+            
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Document</title>
+            </head>
+            
+            <body onload="load()">
+                <div>
+                    <h3>Hello!!</h3>
+                    <p>This is test to track Email</p>
+                </div>
+                <img src="https://node-mailer-zq2s.onrender.com/pixel?subject=${subject}"
+                alt="">
+                <a href="https://node-mailer-zq2s.onrender.com/read" target="_blank">Track</a>
+            
+            </body>
+            
+            </html>
+        `
+    }
+
+    var mailOptionsPrivate = {
         from: 'campaign.lifecycle@gmail.com',
         to: email,
         subject: subject,
@@ -77,7 +82,7 @@ async function send(email, subject) {
                     <script>
                         function load() {
                             let params = { subject: '${subject}' };
-                            let baseurl = "https://node-mailer-zq2s.onrender.com/pixel";
+                            let baseurl = "http://localhost:5000/pixel";
                             let newUrl = new URL(baseurl);
                             newUrl.search = new URLSearchParams(params).toString();
                             fetch(url)
@@ -86,9 +91,9 @@ async function send(email, subject) {
                         }
                     </script>
                 </div>
-                <img src="https://node-mailer-zq2s.onrender.com/pixel?subject='${subject}'"
+                <img src="http://localhost:5000/pixel?subject=${subject}"
                 alt="">
-                <a href="https://node-mailer-zq2s.onrender.com/read" target="_blank">Track</a>
+                <a href="http://localhost:5000/read" target="_blank">Track</a>
             
             </body>
             
@@ -96,7 +101,8 @@ async function send(email, subject) {
         `
     }
 
-    transporter.sendMail(mailOptions, async function (error, info) {
+
+    transporter.sendMail(mailOptionsPublic, async function (error, info) {
         if (error) {
             console.log(error);
         } else {
@@ -122,24 +128,22 @@ app.get("/read", (req, res) => {
 })
 
 app.get("/pixel", (req, res) => {
-    console.log(req.params);
     console.log(req.query);
     // console.log(req.body);
     count++;
     // console.log("Subject: " + req.body.subject);
     console.log("After read Count: " + count);
     
-    res.send({ read: "success", count: count });
+    res.json({ read: "success", count: count });
 })
 
 app.get("/count", (req, res) => {
     res.json({ count: count })
 })
 
-app.post("/email", (req, res) => {
+app.post("/email", async (req, res) => {
     const { email, subject} = req.body;
-    // console.log(email, subject)
-    send(email, subject)
+    await send(email, subject)
     res.json({ status: 'success' });
 })
 

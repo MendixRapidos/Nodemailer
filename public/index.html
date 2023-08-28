@@ -44,7 +44,7 @@
         }
 
         async function reset(){
-            let response = await fetch("http://localhost:5000/reset")
+            let response = await fetch("https://node-mailer-zq2s.onrender.com/reset")
             let count = await response.json();
             document.getElementById("count").innerHTML = count.count
         }
