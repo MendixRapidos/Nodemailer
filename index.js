@@ -22,7 +22,50 @@ var count = 0;
 
 async function send(email, subject) {
 
-    var transporter = nodemailer.createTransport({
+
+
+}
+
+// send();
+
+app.get("/send", async (req, res) => {
+    await send();
+    console.log("Original Count: " + count)
+    res.send("Sent success")
+})
+
+app.get("/read", (req, res) => {
+    console.log(req.body)
+    count++;
+    console.log("After read Count: " + count);
+    res.send({ read: "success", count: count });
+})
+
+app.get("/pixel", (req, res) => {
+    console.log(req.query);
+    // console.log(req.body);
+    count++;
+    // console.log("Subject: " + req.body.subject);
+    console.log("After read Count: " + count);
+
+    res.json({ read: "success", count: count });
+})
+
+app.get("/count", (req, res) => {
+    res.json({ count: count })
+})
+
+app.post("/email", async (req, res) => {
+    const {id, email, subject, content } = req.body;
+
+    // console.log("triggered");
+    // console.log(req.body);
+    // if(req.body == null)
+    //     res.json("empty")
+    // else
+    //     res.json("triggered");
+
+    var transporter = await nodemailer.createTransport({
         service: 'gmail',
         auth: {
             user: "campaign.lifecycle@gmail.com",
@@ -48,16 +91,16 @@ async function send(email, subject) {
             <body onload="load()">
                 <div>
                     <h3>Hello!!</h3>
-                    <p>This is test to track Email</p>
+                    ${content}
                 </div>
-                <img src="https://node-mailer-zq2s.onrender.com/pixel?subject=${subject}"
+                <img src="https://node-mailer-zq2s.onrender.com/pixel?id=${id}&subject=${subject}"
                 alt="">
                 <a href="https://node-mailer-zq2s.onrender.com/read" target="_blank">Track</a>
             
             </body>
             
             </html>
-        `
+        `,
     }
 
     var mailOptionsPrivate = {
@@ -78,7 +121,7 @@ async function send(email, subject) {
             <body onload="load()">
                 <div>
                     <h3>Hello!!</h3>
-                    <p>This is test to track Email</p>
+                    ${content}
                     <script>
                         function load() {
                             let params = { subject: '${subject}' };
@@ -91,60 +134,26 @@ async function send(email, subject) {
                         }
                     </script>
                 </div>
-                <img src="http://localhost:5000/pixel?subject=${subject}"
+                <img src="http://localhost:5000/pixel?id=${id}&subject=${subject}"
                 alt="">
                 <a href="http://localhost:5000/read" target="_blank">Track</a>
-            
             </body>
-            
             </html>
-        `
+        `,
     }
 
+    // console.log(mailOptionsPrivate)
 
-    transporter.sendMail(mailOptionsPublic, async function (error, info) {
+
+    await transporter.sendMail(mailOptionsPublic, async function (error, info) {
         if (error) {
-            console.log(error);
+            await res.json({ status: error });
         } else {
             console.log(info)
+            await res.json({ status: 'Success' });
         }
     });
 
-}
-
-// send();
-
-app.get("/send", async (req, res) => {
-    await send();
-    console.log("Original Count: " + count)
-    res.send("Sent success")
-})
-
-app.get("/read", (req, res) => {
-    console.log(req.body)
-    count++;
-    console.log("After read Count: " + count);
-    res.send({ read: "success", count: count });
-})
-
-app.get("/pixel", (req, res) => {
-    console.log(req.query);
-    // console.log(req.body);
-    count++;
-    // console.log("Subject: " + req.body.subject);
-    console.log("After read Count: " + count);
-    
-    res.json({ read: "success", count: count });
-})
-
-app.get("/count", (req, res) => {
-    res.json({ count: count })
-})
-
-app.post("/email", async (req, res) => {
-    const { email, subject} = req.body;
-    await send(email, subject)
-    res.json({ status: 'success' });
 })
 
 app.get("/reset", (req, res) => {
@@ -152,3 +161,6 @@ app.get("/reset", (req, res) => {
     res.json({ count: count })
 })
 
+app.get("/email", (req, res)=>{
+    console.log(req.query);
+})

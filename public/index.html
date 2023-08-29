@@ -33,6 +33,7 @@
         async function sendMail() {
             let email = document.getElementById("email").value;
             let subject = document.getElementById("subject").value;
+            document.getElementById("status").innerHTML = "Sending...";
             let response = await fetch("https://node-mailer-zq2s.onrender.com/email", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
