@@ -3,10 +3,19 @@ var app = express();
 const nodemailer = require('nodemailer');
 var bodyParser = require('body-parser');
 var cors = require('cors');
+const axios = require('axios')
+var fs = require('fs');
+var mongoDb = require('./Modules/MongoDb')
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors({ origin: '*' }));
+app.use(express.urlencoded({
+    extended: false, // Whether to use algorithm that can handle non-flat data strutures
+    limit: 10000, // Limit payload size in bytes
+    parameterLimit: 2, // Limit number of form items on payload
+}));
+
 
 app.use(express.static('public'));
 // app.use(express.static('private'));
@@ -16,54 +25,16 @@ app.listen(5000, (err) => {
     else console.log('Listening on 5000');
 })
 
-// console.log(emailBody6)
-
 var count = 0;
+var _id, _subject, _email;
 
-async function send(email, subject) {
+// mongoDb.run();
 
+app.post("/email/:email", async (req, res) => {
+    const { id, subject, content } = req.body;
+    const { email } = req.params;
+    console.log(req.params);
 
-
-}
-
-// send();
-
-app.get("/send", async (req, res) => {
-    await send();
-    console.log("Original Count: " + count)
-    res.send("Sent success")
-})
-
-app.get("/read", (req, res) => {
-    console.log(req.body)
-    count++;
-    console.log("After read Count: " + count);
-    res.send({ read: "success", count: count });
-})
-
-app.get("/pixel", (req, res) => {
-    console.log(req.query);
-    // console.log(req.body);
-    count++;
-    // console.log("Subject: " + req.body.subject);
-    console.log("After read Count: " + count);
-
-    res.json({ read: "success", count: count });
-})
-
-app.get("/count", (req, res) => {
-    res.json({ count: count })
-})
-
-app.post("/email", async (req, res) => {
-    const {id, email, subject, content } = req.body;
-
-    // console.log("triggered");
-    // console.log(req.body);
-    // if(req.body == null)
-    //     res.json("empty")
-    // else
-    //     res.json("triggered");
 
     var transporter = await nodemailer.createTransport({
         service: 'gmail',
@@ -93,7 +64,7 @@ app.post("/email", async (req, res) => {
                     <h3>Hello!!</h3>
                     ${content}
                 </div>
-                <img src="https://node-mailer-zq2s.onrender.com/pixel?id=${id}&subject=${subject}"
+                <img src="https://node-mailer-zq2s.onrender.com/pixel?id=${id}&subject=${subject}&email=${email}"
                 alt="">
                 <a href="https://node-mailer-zq2s.onrender.com/read" target="_blank">Track</a>
             
@@ -134,7 +105,7 @@ app.post("/email", async (req, res) => {
                         }
                     </script>
                 </div>
-                <img src="http://localhost:5000/pixel?id=${id}&subject=${subject}"
+                <img src="http://localhost:5000/pixel?id=${id}&subject=${subject}$email=${email}"
                 alt="">
                 <a href="http://localhost:5000/read" target="_blank">Track</a>
             </body>
@@ -143,7 +114,6 @@ app.post("/email", async (req, res) => {
     }
 
     // console.log(mailOptionsPrivate)
-
 
     await transporter.sendMail(mailOptionsPublic, async function (error, info) {
         if (error) {
@@ -156,11 +126,88 @@ app.post("/email", async (req, res) => {
 
 })
 
+app.get("/pixel", async (req, res) => {
+    console.log(req.query);
+    let { id, subject, email } = req.query;
+    // console.log(req.body);
+    count++;
+    console.log(id, subject, email);
+    _id = id;
+    _subject = subject;
+    _email = email;
+
+    mongoDb.write(_id, _subject, _email)
+    // let myObj = {
+    //     CVID: "sadadas",
+    //     TAID: "afwqedasa"
+    // }
+
+    // axios.post("http://localhost:8080/rest/ecemailtrackingservice/v1/email_tracker/main",
+    //    " CVID: ",{
+    //     headers:{
+
+    //     }
+    //    }
+    // )
+    // .then((result) => {
+    //     console.log(result.data)
+    // })
+
+    // let Obj = {
+    //     id: id,
+    //     subject: subject,
+    //     email: email,
+    //     count: 1
+    // }
+
+    // let filename = email.split("@")[0];
+
+    // let filePath = "./Database/" + filename + ".json"
+
+    // email.split("@")[0];
+
+    // console.log(email.split("@")[0])
+
+
+    // console.error("Exist")
+    // fs.readFile(filePath, 'utf8', (err, data) => {
+    //     if (err) {
+    //         console.error('Error reading file:', err);
+    //         fs.writeFile(filePath, JSON.stringify(Obj, null, 2), function (err, result) {
+    //             if (err) console.log('error', err);
+    //         });
+    //         return;
+    //     }
+
+    //     try {
+    //         const jsonData = JSON.parse(data);
+    //         jsonData.count = jsonData.count + 1;
+
+    //         fs.writeFile(filePath, JSON.stringify(jsonData, null, 2), 'utf8', (err) => {
+    //             if (err) {
+    //                 console.error('Error writing file:', err);
+    //             } else {
+    //                 console.log('Count updated successfully.');
+    //             }
+    //         });
+    //     } catch (parseError) {
+    //         console.error('Error parsing JSON:', parseError);
+    //     }
+    // });
+
+    res.json({status: 'ok'});
+
+})
+
+
+app.get("/count", (req, res) => {
+    res.json({id: _id, subject: _subject, email: _email, count: count });
+})
+
 app.get("/reset", (req, res) => {
     count = 0;
     res.json({ count: count })
 })
 
-app.get("/email", (req, res)=>{
-    console.log(req.query);
-})
+
+
