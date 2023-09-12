@@ -4,7 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
-/main.js
+main.js
 /private
 /test.json
 /Database

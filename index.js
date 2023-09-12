@@ -6,6 +6,7 @@ var cors = require('cors');
 const axios = require('axios')
 var fs = require('fs');
 var mongoDb = require('./Modules/MongoDb')
+// const localtunnel = require('localtunnel');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -15,6 +16,23 @@ app.use(express.urlencoded({
     limit: 10000, // Limit payload size in bytes
     parameterLimit: 2, // Limit number of form items on payload
 }));
+
+
+// let tunnelUrl;
+
+
+// (async () => {
+//     const tunnel = await localtunnel({ port: 5000 });
+
+//     // the assigned public url for your tunnel
+//     // i.e. https://abcdefgjhij.localtunnel.me
+//     tunnelUrl = tunnel.url
+//     console.log(tunnelUrl);
+
+//     // tunnel.on('close', () => {
+//     //     // tunnels are closed
+//     // });
+// })();
 
 
 app.use(express.static('public'));
@@ -33,7 +51,7 @@ var _id, _subject, _email;
 app.post("/email/:email", async (req, res) => {
     const { id, subject, content } = req.body;
     const { email } = req.params;
-    console.log(req.params);
+    console.log(req.params, req.body);
 
 
     var transporter = await nodemailer.createTransport({
@@ -46,7 +64,7 @@ app.post("/email/:email", async (req, res) => {
 
     var mailOptionsPublic = {
         from: 'campaign.lifecycle@gmail.com',
-        to: email,
+        to: 'chinmay.limje@expleogroup.com',
         subject: subject,
         html:
             `
@@ -64,9 +82,9 @@ app.post("/email/:email", async (req, res) => {
                     <h3>Hello!!</h3>
                     ${content}
                 </div>
-                <img src="https://node-mailer-zq2s.onrender.com/pixel?id=${id}&subject=${subject}&email=${email}"
+                <img src="https://3d54-103-6-167-50.ngrok-free.app//pixel?id=${id}&subject=${subject}&email=${email}"
                 alt="">
-                <a href="https://node-mailer-zq2s.onrender.com/read" target="_blank">Track</a>
+                <a href="https://3d54-103-6-167-50.ngrok-free.app//read" target="_blank">Track</a>
             
             </body>
             
@@ -113,7 +131,7 @@ app.post("/email/:email", async (req, res) => {
         `,
     }
 
-    // console.log(mailOptionsPrivate)
+    console.log(mailOptionsPublic)
 
     await transporter.sendMail(mailOptionsPublic, async function (error, info) {
         if (error) {
@@ -136,7 +154,7 @@ app.get("/pixel", async (req, res) => {
     _subject = subject;
     _email = email;
 
-    mongoDb.write(_id, _subject, _email)
+    // mongoDb.write(_id, _subject, _email)
     // let myObj = {
     //     CVID: "sadadas",
     //     TAID: "afwqedasa"
@@ -195,13 +213,13 @@ app.get("/pixel", async (req, res) => {
     //     }
     // });
 
-    res.json({status: 'ok'});
+    res.json({ status: 'ok' });
 
 })
 
 
 app.get("/count", (req, res) => {
-    res.json({id: _id, subject: _subject, email: _email, count: count });
+    res.json({ id: _id, subject: _subject, email: _email, count: count });
 })
 
 app.get("/reset", (req, res) => {
@@ -209,5 +227,8 @@ app.get("/reset", (req, res) => {
     res.json({ count: count })
 })
 
-
+app.get("/verify", (req, res) => {
+    count = 0;
+    res.send( "verification complete" );
+})
 
